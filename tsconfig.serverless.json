@@ -1,0 +1,29 @@
+{
+  "buildOnSave": false,
+  "compileOnSave": false,
+  "compilerOptions": {
+      "charset": "utf8",
+      "module": "commonjs",
+      "target": "es2018",
+      "lib": [
+          "es2018",
+          "dom"
+      ],
+      "types" : [
+          "node"
+    ],
+      "noImplicitAny": false,
+      "removeComments": true,
+      "strictNullChecks": false,
+      "noImplicitThis": false,
+      "alwaysStrict": false,
+      "preserveConstEnums": false,
+      "sourceMap": false,
+      "esModuleInterop": false,
+      "outDir": "functions",
+      "noImplicitReturns": true
+  },
+  "typeRoots": [
+      "node_modules/@types"
+  ]
+}

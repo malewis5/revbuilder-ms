@@ -1,0 +1,17 @@
+node("staging-base") {
+  gitCheckout{}
+
+  //def targetBranch = env.BRANCH_NAME
+  def sentryDSN = ""
+  def whitelist = ""
+  
+  buildDeployNodeJS {
+    namespace = 'client-name-here'
+    project = 'client-name-here'
+    envs =
+    [
+      '{"env":{"name": "SENTRY_DSN", "value": "' + "${sentryDSN}" + '"}}',
+      '{"env":{"name": "WHITELIST", "value": "' + "${whitelist}" + '"}}',
+    ]
+  } 
+}

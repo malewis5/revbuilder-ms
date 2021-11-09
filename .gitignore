@@ -1,0 +1,91 @@
+# compiled output
+.env
+/dist
+/tmp
+/out-tsc
+# dependencies
+/node_modules
+# profiling files
+chrome-profiler-events.json
+speed-measure-plugin.json
+# IDEs and editors
+.idea
+workspace.xml
+usage.statistics.xml
+tasks.xml
+.project
+.classpath
+.c9/
+*.launch
+.settings/
+*.sublime-workspace
+# IDE - VSCode
+.vscode/*
+!.vscode/settings.json
+!.vscode/tasks.json
+!.vscode/launch.json
+!.vscode/extensions.json
+# misc
+/.sass-cache
+/connect.lock
+/coverage
+/libpeerconnection.log
+npm-debug.log
+yarn-error.log
+testem.log
+/typings
+# System Files
+.DS_Store
+Thumbs.db
+#other
+*~
+*.sw[mnpcod]
+*.log
+*.tmp
+*.tmp.*
+log.txt
+*.sublime-project
+
+npm-debug.log*
+.sourcemaps/
+.sass-cache/
+.tmp/
+.versions/
+coverage/
+dist/
+node_modules/
+tmp/
+temp/
+hooks/
+platforms/
+plugins/
+plugins/android.json
+plugins/ios.json
+www/
+$RECYCLE.BIN/
+DockerVolume/
+UserInterfaceState.xcuserstate
+.ionic/
+.scannerwork/
+
+#REACT
+
+# OSX
+#
+.DS_Store
+
+
+# node.js
+#
+node_modules/
+npm-debug.log
+yarn-error.log
+e
+.jest/
+functions
+deploy/.envs/develop.env
+deploy/.envs/staging.env
+deploy/.envs/uat.env
+deploy/.envs/master.env
+*.http
+functions.zip

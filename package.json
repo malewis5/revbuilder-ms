@@ -1,0 +1,68 @@
+{
+  "name": "merce-nodejs-ms-boilerplate",
+  "version": "1.0.0",
+  "description": "Starter project for a fast, simple and clean RESTful API for any implementation",
+  "main": "serverless-entry.js",
+  "scripts": {
+    "cleanup": "rm -rf dist && rm -rf node_modules",
+    "start": "tsc && node dist/index",
+    "start:dev": "PORT=8082 nodemon --watch 'src/**/*.ts' --ignore 'src/**/*.spec.ts' ./src/index.ts",
+    "lint": "tslint --project tsconfig.json",
+    "tsc": "tsc",
+    "clean": "rimraf \"functions/*\"",
+    "cp-package": "copyfiles function.json package.json functions",
+    "build": "npm run clean && tsc -p tsconfig.serverless.json && npm run cp-package;",
+    "functions-gcp-package": "",
+    "functions-gcp-deploy": "sh ./deploy/cloud/serverless-functions/gcp-deploy.sh",
+    "functions-aws-package": "sh ./deploy/cloud/serverless-functions/aws-package.sh",
+    "functions-aws-deploy": "sh ./deploy/cloud/serverless-functions/aws-deploy.sh",
+    "functions-azure-package": "sh ./deploy/cloud/serverless-functions/azure-package.sh",
+    "functions-azure-deploy": "sh ./deploy/cloud/serverless-functions/azure-deploy.sh;",
+    "functions-azure-full": "npm run build; npm run functions-azure-package; npm run functions-azure-deploy",
+    "functions-aws-full": "npm run build; npm run functions-aws-package; npm run functions-aws-deploy"
+  },
+  "repository": {
+    "type": "https",
+    "url": "https://github.com/PeakActivity/merce-nodejs-ms-boilerplate.git"
+  },
+  "keywords": [
+    "fastify",
+    "typescript",
+    "docker",
+    "nodejs",
+    "boilerplate",
+    "rest",
+    "api"
+  ],
+  "author": "Wesley Salazar <wesley@peakactivity.com>",
+  "dependencies": {
+    "@sentry/node": "^5.22.3",
+    "aws-serverless-express": "^3.4.0",
+    "axios": "^0.19.2",
+    "azure-function-express": "^2.0.0",
+    "body-parser": "^1.19.0",
+    "cors": "^2.8.5",
+    "dotenv": "^8.2.0",
+    "express": "^4.17.1",
+    "fastify": "^2.4.1",
+    "morgan": "^1.10.0",
+    "request": "^2.88.0"
+  },
+  "devDependencies": {
+    "@types/body-parser": "^1.17.0",
+    "@types/cors": "^2.8.5",
+    "@types/jest": "^24.0.12",
+    "@types/morgan": "^1.9.1",
+    "@types/node": "^12.0.0",
+    "@types/request": "^2.48.1",
+    "copyfiles": "^2.4.0",
+    "jest": "^24.8.0",
+    "nodemon": "^1.19.0",
+    "npm-run-all": "^4.1.5",
+    "rimraf": "^3.0.2",
+    "ts-jest": "^24.0.2",
+    "ts-node": "^8.1.0",
+    "tslint": "^5.16.0",
+    "typescript": "^3.4.5"
+  }
+}

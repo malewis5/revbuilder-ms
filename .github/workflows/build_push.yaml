@@ -1,0 +1,44 @@
+name: Build and Push
+# This workflow is triggered on pushes to the repository.
+on:
+  push:
+    branches:
+      - master
+      - develop
+      - staging
+      - uat
+
+jobs:
+  build-push:
+    name: Build and Push
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v2
+        with:
+          token: ${{ secrets.GH_TOKEN }}
+          submodules: recursive
+      - name: Extract branch name
+        shell: bash
+        run: |
+          BRANCH=${GITHUB_REF#refs/heads/}
+          if [[ "master" == ${BRANCH} ]]; then
+            BRANCH="production"
+          fi
+          echo "##[set-output name=branch;]$(echo ${BRANCH})"
+        id: extract_branch
+      - name: Extract repo name
+        shell: bash
+        run: |
+          IFS='/' read -ra SPLIT <<< "${GITHUB_REPOSITORY}"
+          echo "##[set-output name=repo;]$(echo ${SPLIT[1]})"
+        id: extract_repo
+      - name: Build and push Docker images
+        uses: docker/build-push-action@v1.1.0
+        with:
+          dockerfile: Dockerfile
+          username: _json_key
+          password: ${{ secrets.DOCKER_PASSWORD }}
+          registry: gcr.io
+          repository: staging-omnimerse/${{ steps.extract_repo.outputs.repo }}
+          tags: ${{ steps.extract_branch.outputs.branch }}

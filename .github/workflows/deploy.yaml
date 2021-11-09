@@ -1,0 +1,90 @@
+name: Test
+
+on:
+  workflow_dispatch:
+    inputs:
+      env:
+        description: "env"
+        required: false
+        default: "dev"
+      client:
+        description: "client"
+        required: false
+        default: "sandbox"
+      chart:
+        description: "chart name"
+        required: false
+        default: "merce"
+      SERVERLESS_REGION:
+        description: "SERVERLESS_REGION"
+        required: true
+        default: "us-east1"
+      SERVERLESS_FUNCTION_NAME:
+        description: "SERVERLESS_FUNCTION_NAME"
+        required: true
+        default: "github-test"
+      SERVERLESS_PROJECT:
+        description: "SERVERLESS_PROJECT"
+        required: true
+        default: "staging-omnimerse"
+      WHITELIST:
+        description: "WHITELIST"
+        required: false
+        default: ""
+
+jobs:
+  build:
+    runs-on: ubuntu-16.04
+    name: Deploy to Cloud
+    steps:
+      - uses: actions/checkout@v2
+
+      - name: Setup node
+        uses: actions/setup-node@v1
+
+      - name: Vault Secrets
+        uses: hashicorp/vault-action@v2.1.0
+        with:
+          url: https://ui.vault.ops.merce.io
+          token: ${{ secrets.VAULT_SECRET }}
+          secrets: |
+            /cubbyhole/${{ github.event.inputs.client }} ${{ github.event.inputs.env }}.cloud | CLOUD_CONFIG ;
+            /cubbyhole/${{ github.event.inputs.client }} ${{ github.event.inputs.env }}."${{ github.event.inputs.chart }}" | CHART_PARAMS ;
+
+      - name: Extract CLOUD
+        id: extract-cloud
+        run: |
+          set -x
+          CLOUD_CONFIG=$(echo ${CLOUD_CONFIG} | base64 -d)
+          for KEY in $(jq '. | keys | .[]' <<< "${CLOUD_CONFIG}"); do
+            VALUE=$(jq -r ".[$KEY]" <<< "${CLOUD_CONFIG}");
+            echo "::set-output name=${KEY//\"}::${VALUE}"
+          done
+
+      - name: Install GCP CLI
+        # if: ${{ 'gcp' == steps.extract-cloud.outputs.PROVIDER }}
+        uses: GoogleCloudPlatform/github-actions/setup-gcloud@master
+        with:
+          export_default_credentials: true
+
+      - name: GCP CLI Connect
+        # if: ${{ 'gcp' == steps.extract-cloud.outputs.PROVIDER }}
+        run: |
+          set -x
+          bash deploy/cloud/gcp-connect.sh "${{ steps.extract-cloud.outputs.PROJECT }}" "${{ steps.extract-cloud.outputs.ZONE }}" "${{ steps.extract-cloud.outputs.SA_EMAIL }}" "${{ steps.extract-cloud.outputs.SA_CONTENT }}" "${{ steps.extract-cloud.outputs.CLUSTER }}"
+
+      - run: npm install
+      - run: npm run build
+
+      - name: Deploy to Cloud Functions
+        run: |
+          GIT_BRANCH=$(git branch --show-current)
+          gcloud functions deploy "${{ github.event.inputs.env }}-${{ github.event.inputs.SERVERLESS_FUNCTION_NAME }}" \
+            --runtime nodejs12 \
+            --region "${{ github.event.inputs.SERVERLESS_REGION }}" \
+            --entry-point appEntryPoint \
+            --allow-unauthenticated \
+            --trigger-http \
+            --project "${{ github.event.inputs.SERVERLESS_PROJECT }}" \
+            --set-env-vars=WHITELIST="${{ github.event.inputs.WHITELIST }}" \
+            --source ./functions
