@@ -46,6 +46,14 @@ Thumbs.db
 log.txt
 *.sublime-project
 
+# ngrok tunnel file
+config/tunnel.pid
+.npmrc
+.shopify-cli.yml
+# webpack build output
+dist/
+build/
+
 npm-debug.log*
 .sourcemaps/
 .sass-cache/
